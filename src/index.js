@@ -47,32 +47,28 @@ function checkWinner(squares) {
 
 class Board extends Component {
     renderSquare(i) {
-        return <Square 
+        return <Square key={i}
                     value={this.props.squares[i]} 
                     onClick={() => this.props.onClick(i)} 
                 />;
     }
 
+    makeRow(rowId, colNum) {
+        const cols = [];
+        for (let i = 0; i < colNum; ++i) {
+            cols.push(this.renderSquare(rowId * colNum + i + 1));
+        }
+        return <div className='board-row' key={rowId}>{cols}</div>;
+    }
+
     render() {
-        return (
-            <div>
-                <div className='board-row'>
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className='board-row'>
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className='board-row'>
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
-            </div>
-        )
+        const rows = [];
+        const rowNum = 3, colNum = 3;
+        for (let i = 0; i < rowNum; ++i) {
+            rows.push(this.makeRow(i, colNum));
+        }
+
+        return <div>{rows}</div>;
     }
 }
 
@@ -155,7 +151,7 @@ class Game extends Component {
                     <ol>{jumpButtons}</ol>
                 </div>
             </div>
-        )
+        );
     }
 }
 
