@@ -24,6 +24,8 @@ class Board extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            symbols: ['X', 'O'],
+            playerID: 0,
             squares: Array(9).fill(null),
         };
     }
@@ -37,8 +39,11 @@ class Board extends Component {
 
     handleClick(i) {
         const squares = this.state.squares.slice();
-        squares[i] = 'X';
-        this.setState({squares: squares});
+        squares[i] = this.state.symbols[this.state.playerID];
+        this.setState({
+            squares: squares,
+            playerID: 1 - this.state.playerID,
+        });
     }
 
     render() {
