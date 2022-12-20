@@ -1,5 +1,5 @@
 import * as math from 'mathjs';
-import React, { Children, Component } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
@@ -129,7 +129,7 @@ class Game extends Component {
         const current = history[this.state.currentStep];
         const jumpButtons = this.state.history.map((_unused, idx) => {
             let info;
-            if (idx == 0) {
+            if (idx === 0) {
                 info = 'Jump to start';
             } else {
                 info = `Jump to move ${idx}`;
