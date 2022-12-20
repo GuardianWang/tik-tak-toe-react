@@ -56,7 +56,7 @@ class Board extends Component {
     makeRow(rowId, colNum) {
         const cols = [];
         for (let i = 0; i < colNum; ++i) {
-            cols.push(this.renderSquare(rowId * colNum + i + 1));
+            cols.push(this.renderSquare(rowId * colNum + i));
         }
         return <div className='board-row' key={rowId}>{cols}</div>;
     }
@@ -93,6 +93,9 @@ class Game extends Component {
         const currentStep = this.state.currentStep;
         let history = this.state.history.slice(0, currentStep + 1);
         const squares = history[currentStep].squares.slice();
+        if (squares[i] !== null) {
+            return;
+        }
         squares[i] = this.state.symbols[this.state.playerID];
         this.setState({
             history: history.concat({
