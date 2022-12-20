@@ -86,6 +86,7 @@ class Game extends Component {
                 squares: Array(9).fill(null),
             }],
             winner: null,
+            currentStep: 0,
         };
     }
     
@@ -93,8 +94,9 @@ class Game extends Component {
         if (this.state.winner !== null) {
             return;
         }
-        let history = this.state.history;
-        const squares = history[history.length - 1].squares.slice();
+        const currentStep = this.state.currentStep;
+        let history = this.state.history.slice(0, currentStep + 1);
+        const squares = history[currentStep].squares.slice();
         squares[i] = this.state.symbols[this.state.playerID];
         this.setState({
             history: history.concat({
@@ -102,6 +104,15 @@ class Game extends Component {
             }),
             playerID: 1 - this.state.playerID,
             winner: checkWinner(squares),
+            currentStep: currentStep + 1,
+        });
+    }
+
+    jumpTo(i) {
+        this.setState({
+            playerID: i % 2,
+            currentStep: i,
+            winner: checkWinner(this.state.history[i].squares),
         });
     }
 
@@ -109,11 +120,26 @@ class Game extends Component {
         let status = '';
         if (this.state.winner !== null) {
             status = `Winner: ${this.state.winner}`;
-        } else {
+        } else if (this.state.currentStep < 9) {
             status = `Next player: ${this.state.symbols[this.state.playerID]}`;
+        } else {
+            status = 'Tie!';
         }
         const history = this.state.history;
-        const current = history[history.length - 1];
+        const current = history[this.state.currentStep];
+        const jumpButtons = this.state.history.map((_unused, idx) => {
+            let info;
+            if (idx == 0) {
+                info = 'Jump to start';
+            } else {
+                info = `Jump to move ${idx}`;
+            }
+            return (
+                <li key={idx}>
+                    <button onClick={() => this.jumpTo(idx)}>{info}</button>
+                </li>
+            )
+        });
 
         return (
             <div className='game'>
@@ -126,7 +152,7 @@ class Game extends Component {
                 </div>
                 <div className='game-info'>
                     <div className='status'>{status}</div>
-                    <ol></ol>
+                    <ol>{jumpButtons}</ol>
                 </div>
             </div>
         )
