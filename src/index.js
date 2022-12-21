@@ -3,8 +3,14 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 
+/** 
+ * Each square of the grid.
+ */
 class Square extends Component {
     
+    /**
+     * Only needs to update when either value or color differs.
+     */
     shouldComponentUpdate(nextProps, nextState) {
         return nextProps.value !== this.props.value || nextProps.color !== this.props.color;
     }
@@ -23,13 +29,18 @@ class Square extends Component {
 }
 
 /**
-* Retrieve a row from a matrix
+* Retrieve a row from a matrix.
 */
 function row(matrix, index) {
     let rows = math.size(matrix).valueOf()[1];
     return math.flatten(math.subset(matrix, math.index(index, math.range(0, rows)))).toArray();
 }
 
+/**
+ * Checks the winner given board strings.
+ * @param squares 
+ * @returns 
+ */
 function checkWinner(squares) {
     const indices = math.range(0, 9);
     const matrixBoard = math.matrix(math.reshape(indices, [3, 3]));
@@ -49,7 +60,11 @@ function checkWinner(squares) {
     return res;
 }
 
+/**
+ * A board that draws each square.
+ */
 class Board extends Component {
+    /** Draws the i-th square. */
     renderSquare(i) {
         return <Square key={i}
                     value={this.props.squares[i]} 
@@ -58,6 +73,7 @@ class Board extends Component {
                 />;
     }
 
+    /** Makes a list of squares that make a row. */
     makeRow(rowId, colNum) {
         const cols = [];
         for (let i = 0; i < colNum; ++i) {
@@ -77,6 +93,7 @@ class Board extends Component {
     }
 }
 
+/** The tik-tak-toe game. */
 class Game extends Component {
     constructor(props) {
         super(props);
@@ -94,6 +111,12 @@ class Game extends Component {
         };
     }
     
+    /**
+     * Given an array of length 3, return the color matrix so that it highlights the 3 squares
+     * that make the player win.
+     * @param {Array} indices 3 indices that make the player win.
+     * @returns 
+     */
     getColors(indices) {
         const colors = Array(this.size).fill(null);
         if (indices !== null) {
@@ -104,6 +127,7 @@ class Game extends Component {
         return colors
     }
     
+    /** Updates state when clicking the i-th square. */
     handleClick(i) {
         this.setState((state, props) => {
             if (state.winner !== null) {
@@ -130,6 +154,7 @@ class Game extends Component {
         });
     }
 
+    /** Jumps to a history step. */
     jumpTo(i) {
         this.setState((state, props) => {
             const winnerRes = checkWinner(state.history[i].squares);
