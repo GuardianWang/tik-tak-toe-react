@@ -6,7 +6,7 @@ import './index.css';
 class Square extends Component {
     
     shouldComponentUpdate(nextProps, nextState) {
-        return nextProps.value !== this.props.value;
+        return nextProps.value !== this.props.value || nextProps.color !== this.props.color;
     }
 
     render() {
@@ -14,6 +14,7 @@ class Square extends Component {
             <button 
                 className='square' 
                 onClick={this.props.onClick}
+                style={{backgroundColor: this.props.color}}
             >
                 {this.props.value}
             </button>
@@ -35,20 +36,24 @@ function checkWinner(squares) {
     const transposed = math.transpose(matrixBoard);
     const diagonal = math.matrix([[0, 4, 8], [2, 4, 6]]);
     const checkIdx = math.concat(matrixBoard, transposed, diagonal, 0);
+    const res = {winner: null, indices: null};
     for (let i = 0; i < checkIdx.size()[0]; i++) {
         let line = row(checkIdx, i);
         let [sa, sb, sc] = math.subset(squares, math.index(line));
         if (sa !== null && sa === sb && sb === sc) {
-            return sa;
+            res.winner = sa;
+            res.indices = line;
+            return res;
         }
     }
-    return null;
+    return res;
 }
 
 class Board extends Component {
     renderSquare(i) {
         return <Square key={i}
                     value={this.props.squares[i]} 
+                    color={this.props.colors[i]} 
                     onClick={() => this.props.onClick(i)} 
                 />;
     }
@@ -75,15 +80,28 @@ class Board extends Component {
 class Game extends Component {
     constructor(props) {
         super(props);
+        this.size = 9;
+        this.successColor = 'yellow';
         this.state = {
             symbols: ['X', 'O'],
             playerID: 0,
             history: [{
                 squares: Array(9).fill(null),
             }],
+            colors: Array(9).fill(null),
             winner: null,
             currentStep: 0,
         };
+    }
+    
+    getColors(indices) {
+        const colors = Array(this.size).fill(null);
+        if (indices !== null) {
+            for (let idx of indices) {
+                colors[idx] = this.successColor;
+            }
+        }
+        return colors
     }
     
     handleClick(i) {
@@ -97,21 +115,25 @@ class Game extends Component {
             return;
         }
         squares[i] = this.state.symbols[this.state.playerID];
+        const winnerRes = checkWinner(squares);
         this.setState({
             history: history.concat({
                 squares: squares,
             }),
             playerID: 1 - this.state.playerID,
-            winner: checkWinner(squares),
+            winner: winnerRes.winner,
+            colors: this.getColors(winnerRes.indices),
             currentStep: currentStep + 1,
         });
     }
 
     jumpTo(i) {
+        const winnerRes = checkWinner(this.state.history[i].squares);
         this.setState({
             playerID: i % 2,
             currentStep: i,
-            winner: checkWinner(this.state.history[i].squares),
+            winner: winnerRes.winner,
+            colors: this.getColors(winnerRes.indices),
         });
     }
 
@@ -145,6 +167,7 @@ class Game extends Component {
                 <div className='game-board'>
                     <Board 
                         squares={current.squares}
+                        colors={this.state.colors}
                         // Use arrow function instead of simply this.handleClick
                         onClick={i => this.handleClick(i)}
                     />
