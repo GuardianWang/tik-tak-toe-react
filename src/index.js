@@ -128,7 +128,7 @@ class Game extends Component {
     }
     
     /** Updates state when clicking the i-th square. */
-    handleClick(i) {
+    handleClick = (i) => {
         this.setState((state, props) => {
             if (state.winner !== null) {
                 return {};
@@ -152,7 +152,7 @@ class Game extends Component {
                 currentStep: currentStep + 1,
             };
         });
-    }
+    };
 
     /** Jumps to a history step. */
     jumpTo(i) {
@@ -200,7 +200,7 @@ class Game extends Component {
                         colors={this.state.colors}
                         // Use arrow function instead of simply this.handleClick
                         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#Boxing_with_prototype_and_static_methods
-                        onClick={i => this.handleClick(i)}
+                        onClick={this.handleClick}
                     />
                 </div>
                 <div className='game-info'>
