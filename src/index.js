@@ -131,13 +131,13 @@ class Game extends Component {
     handleClick = (i) => {
         this.setState((state, props) => {
             if (state.winner !== null) {
-                return {};
+                return;
             }
             const currentStep = state.currentStep;
             let history = state.history.slice(0, currentStep + 1);
             const squares = history[currentStep].squares.slice();
             if (squares[i] !== null) {
-                return {};
+                return;
             }
             squares[i] = state.symbols[state.playerID];
             const winnerRes = checkWinner(squares);
