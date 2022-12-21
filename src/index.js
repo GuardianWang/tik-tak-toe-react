@@ -109,6 +109,7 @@ class Game extends Component {
             winner: null,
             currentStep: 0,
         };
+        this.handleClick = this.handleClick.bind(this);
     }
     
     /**
@@ -128,7 +129,7 @@ class Game extends Component {
     }
     
     /** Updates state when clicking the i-th square. */
-    handleClick = (i) => {
+    handleClick(i) {
         this.setState((state, props) => {
             if (state.winner !== null) {
                 return;
