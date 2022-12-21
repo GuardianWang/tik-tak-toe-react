@@ -169,6 +169,7 @@ class Game extends Component {
                         squares={current.squares}
                         colors={this.state.colors}
                         // Use arrow function instead of simply this.handleClick
+                        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#Boxing_with_prototype_and_static_methods
                         onClick={i => this.handleClick(i)}
                     />
                 </div>
