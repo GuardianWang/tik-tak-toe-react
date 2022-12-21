@@ -105,35 +105,40 @@ class Game extends Component {
     }
     
     handleClick(i) {
-        if (this.state.winner !== null) {
-            return;
-        }
-        const currentStep = this.state.currentStep;
-        let history = this.state.history.slice(0, currentStep + 1);
-        const squares = history[currentStep].squares.slice();
-        if (squares[i] !== null) {
-            return;
-        }
-        squares[i] = this.state.symbols[this.state.playerID];
-        const winnerRes = checkWinner(squares);
-        this.setState({
-            history: history.concat({
-                squares: squares,
-            }),
-            playerID: 1 - this.state.playerID,
-            winner: winnerRes.winner,
-            colors: this.getColors(winnerRes.indices),
-            currentStep: currentStep + 1,
+        this.setState((state, props) => {
+            if (state.winner !== null) {
+                return {};
+            }
+            const currentStep = state.currentStep;
+            let history = state.history.slice(0, currentStep + 1);
+            const squares = history[currentStep].squares.slice();
+            if (squares[i] !== null) {
+                return {};
+            }
+            squares[i] = state.symbols[state.playerID];
+            const winnerRes = checkWinner(squares);
+            
+            return {
+                history: history.concat({
+                    squares: squares,
+                }),
+                playerID: 1 - state.playerID,
+                winner: winnerRes.winner,
+                colors: this.getColors(winnerRes.indices),
+                currentStep: currentStep + 1,
+            };
         });
     }
 
     jumpTo(i) {
-        const winnerRes = checkWinner(this.state.history[i].squares);
-        this.setState({
-            playerID: i % 2,
-            currentStep: i,
-            winner: winnerRes.winner,
-            colors: this.getColors(winnerRes.indices),
+        this.setState((state, props) => {
+            const winnerRes = checkWinner(state.history[i].squares);
+            return {
+                playerID: i % 2,
+                currentStep: i,
+                winner: winnerRes.winner,
+                colors: this.getColors(winnerRes.indices),
+            };
         });
     }
 
